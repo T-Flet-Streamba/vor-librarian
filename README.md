@@ -1,8 +1,11 @@
 # Vor Librarian
 
-Vor Librarian is a **remote Cursor skill** backed by this repository. It gives developers documentation-aware AI workflows: implementation plans, stakeholder answers, documentation creation and updates, and agent implementation with pull requests—all grounded in standardized `docs/` folders in project repos.
+Vor Librarian is both a **Cursor skill** backed by this repository and soon it will also be a **remote service** using the same skill and prompts, with visibility across **all VOR projects and their documentation at once**—not only the repo open in your editor.
+For the skill version, you install a small local skill (`SKILL.md`) that orchestrates documentation-aware AI processes in whatever project you have open.
 
-You **do not need to clone this repository** to use it.
+Those processes include implementation plans, stakeholder answers, documentation creation and updates, and agent implementation with pull requests—all grounded in standardized `docs/` folders in project repos.
+
+You **do not need to clone this repository** to use the skill or the service (only maintainers would clone it).
 
 ## How it works
 
@@ -37,16 +40,46 @@ Mode selection is described in `skill/remote/entrypoint.md` (fetched automatical
 ## Prerequisites
 
 - [Cursor](https://cursor.com) with agent / skills support
-- [GitHub CLI](https://cli.github.com/) (`gh`) with `gh auth login` (public and private repos)
-- PowerShell 5.1+ on Windows, or bash on macOS/Linux, for install only
+- [GitHub CLI](https://cli.github.com/) (`gh`) — then run `gh auth login` (needed for public and private repos)
+
+  **Windows**
+
+  ```powershell
+  winget install --id GitHub.cli --source winget
+  ```
+
+  **macOS**
+
+  ```bash
+  brew install gh
+  ```
+
+  **Linux (Debian / Ubuntu)**
+
+  Other Linux distros and package managers: [GitHub CLI installation](https://github.com/cli/cli#installation).
+
 
 ## Install
 
-### Windows (recommended)
+Log into `gh` first if not already done so, then run the installation oneliner for your OS (see the install options below to decide whether to use the option-passing oneliners).
+```bash
+gh auth login
+```
+
+### Windows
 
 ```powershell
 gh api repos/streamba/vor-librarian/contents/scripts/install.ps1?ref=master -H "Accept: application/vnd.github.raw" | powershell -NoProfile -ExecutionPolicy Bypass -
 ```
+
+**Oneliner with options** (append switches after the closing brackets; the one in this example installs it to the current repo):
+
+```powershell
+& ([scriptblock]::Create(((gh api repos/streamba/vor-librarian/contents/scripts/install.ps1?ref=master -H "Accept: application/vnd.github.raw") -join "`n"))) -Project
+```
+
+(The `-join` is required because `gh` returns one string per line).
+Add other switches on the same line instead or after `-Project`, e.g. `-Ref dev` or `-Repo your-org/vor-librarian`.
 
 ### macOS / Linux
 
@@ -54,27 +87,27 @@ gh api repos/streamba/vor-librarian/contents/scripts/install.ps1?ref=master -H "
 gh api repos/streamba/vor-librarian/contents/scripts/install.sh?ref=master -H "Accept: application/vnd.github.raw" | bash
 ```
 
-### Install options
-
-Pass arguments after the one-liner (bash example):
+**Oneliner with options** (append flags after `bash -s --`; the flag in this example installs it to the current repo):
 
 ```bash
 gh api repos/streamba/vor-librarian/contents/scripts/install.sh?ref=master -H "Accept: application/vnd.github.raw" | bash -s -- --project
 ```
 
-| Flag | Default | Meaning |
-|------|---------|---------|
-| *(none)* | personal | Install to `~/.cursor/skills/vor-librarian/` (all projects) |
-| `--project` | — | Install to `.cursor/skills/vor-librarian/` in the current directory |
-| `--ref` | `master` | Branch or tag for GitHub API fetches |
-| `--repo` | `streamba/vor-librarian` | Repository owner/name (forks, mirrors) |
+### Install options
 
-PowerShell (when running the script file directly):
+| Switch (PowerShell) | Flag (bash) | Default | Meaning |
+|---------------------|-------------|---------|---------|
+| *(none)* | *(none)* | personal | Install to `~/.cursor/skills/vor-librarian/` (all projects) |
+| `-Project` | `--project` | — | Install to `.cursor/skills/vor-librarian/` in the current directory |
+| `-Ref` | `--ref` | `master` | Branch or tag for GitHub API fetches |
+| `-Repo` | `--repo` | `streamba/vor-librarian` | Repository owner/name (forks, mirrors) |
+
+If you are a maintainer and cloned this repository, you can of course run the script directly:
 
 ```powershell
 .\scripts\install.ps1              # personal
 .\scripts\install.ps1 -Project     # project-local
-.\scripts\install.ps1 -Ref v1.0.0  # pin to a tag
+.\scripts\install.ps1 -Ref v1.0.0  # pin to a tag/branch
 ```
 
 ### What gets installed
@@ -91,16 +124,16 @@ Default source: **`streamba/vor-librarian`** on ref **`master`**.
 1. Open the **project repository** you want to work on (the one with or without a `docs/` folder).
 2. In Cursor, invoke the skill (e.g. **@vor-librarian**).
 3. Describe what you need—for example:
-   - *“Plan how to add rate limiting using our docs.”* → **Plan**
-   - *“Can we support SSO for enterprise customers?”* → **Ask**
-   - *“Update docs for everything merged since last release.”* → **Update docs**
+   - *"Plan how to add rate limiting using our docs."* → **Plan**
+   - *"Can we support SSO for enterprise customers?"* → **Ask**
+   - *"Update docs for everything merged since last release."* → **Update docs**
 4. The agent loads remote prompts and applies them to your workspace.
 
 ## Updates
 
 | What changed | What you do |
 |--------------|-------------|
-| Prompts or `entrypoint.md` on `master` | Nothing—next skill use fetches the latest |
+| Prompts or `entrypoint.md` on `master` | Nothing; the next skill use will fetch the latest |
 | Installed `SKILL.md` contract | Re-run the install one-liner |
 | Test a feature branch (maintainers) | Edit installed `vor-librarian.json` (`repo` / `ref`) or reinstall with `--ref` |
 
@@ -135,7 +168,7 @@ Example:
 
 ## What you do not need to do
 
-- Clone `vor-librarian` into each project
+- Clone `vor-librarian`
 - Copy files from `prompts/` into your app repos
 - Run `git pull` to refresh prompts (unless you are developing vor-librarian itself)
 
@@ -156,3 +189,4 @@ skill/remote/         # entrypoint.md — fetched on every skill use
 scripts/              # install.ps1, install.sh (remote one-liner entrypoints)
 container/            # Future containerized runtime
 ```
+
