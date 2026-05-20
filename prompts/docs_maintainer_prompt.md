@@ -139,7 +139,7 @@ Rules:
 
 | File                       | Contents                                                                                                                                                                                       |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `project_layout.md`        | Tree-oriented map: dirs and important files, very short purpose each; key class/function/module **names**; **MUST** start with `docs_as_of`                                                    |
+| `project_layout.md`        | Tree-oriented map: dirs and important files, very short purpose each; key class/function/module **names**; **MUST** start with `docs_as_of`. **Do not** include the `docs/` folder or its contents—the layout describes the **codebase**, not this documentation tree. |
 | `architecture.md`          | Components, boundaries, flows, invariants; **MAY** split as `architecture_<aspect>.md`; must reference features, paths, symbols                                                                |
 | `environment_variables.md` | **All** env vars the project is **expected** to read; per var: name, one-line meaning, where/how used (if used in many files, give general description, not list), required vs optional when known                                                         |
 | `testing.md`               | Test locations; how to run; **merge-critical** suites; **area-scoped** suites (run when touching related code); **human-only** suites (do not automate; document when a human should run them) |
@@ -343,7 +343,7 @@ Ask: *Would someone reading only this file, at its usual level of detail, be mis
 When finishing a change that should leave `docs/` consistent, work through this list. **Skip** items that truly do not apply; if something expected is skipped, **say so** in the new history file body.
 
 1. `**history/`** — Add one new file per §6; include PRs, stories, paths, feature numbers; set filename timestamp per §6.2 and disclose which clock rule you used.
-2. `technical/project_layout.md` — If structure changed: update content. Regardless, refresh `docs_as_of`.
+2. `technical/project_layout.md` — If structure changed: update content (exclude `docs/` from the tree). Regardless, refresh `docs_as_of`.
 3. `**technical/architecture*.md**` — If boundaries or major flows changed: update and fix cross-references to features and symbols.
 4. `**technical/environment_variables.md**` — If code reads new/removed vars: update the list.
 5. `**technical/testing.md**` — If test layout or merge/human-only policy changed: update.
