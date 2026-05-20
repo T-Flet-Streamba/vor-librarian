@@ -26,12 +26,16 @@ Every adopting repository **MUST** contain:
 ```text
 docs/
 ├── product/
+│   └── extras/          # optional — see §7
 ├── technical/
+│   └── extras/          # optional — see §7
 ├── future/
+│   └── extras/          # optional — rarely used; see §7
 └── history/
+    └── extras/          # optional — rarely used; see §7
 ```
 
-Do **not** rename or omit these subfolders. If a subtree has little content yet, optionally add a short `README.md` in that folder explaining that it is intentionally minimal.
+Do **not** rename or omit these four top-level subfolders. The `extras/` subtrees are **optional**; create them only when supplementary material is needed (see §7). If a subtree has little content yet, optionally add a short `README.md` in that folder explaining that it is intentionally minimal.
 
 ---
 
@@ -99,6 +103,8 @@ product/
 
 Reference screenshots from the corresponding feature file where useful.
 
+Long walkthroughs, setup sequences, or vendor-specific click paths that would bloat a feature file belong in `product/extras/` (see §7), linked from the feature file under a **Supplementary material** section.
+
 New feature files are **rare**; numbering discipline must hold so `technical/` and `history/` can cite stable IDs.
 
 **Content expectations:** short summary, primary surface (API/UI), constraints, pointers to `technical/` filenames, optional pointers to `future/` or `history/`.
@@ -140,6 +146,8 @@ Rules:
 
 
 Regeneration of `project_layout.md` **MAY** be automated elsewhere; the stamp and cross-links **MUST** remain correct after publish.
+
+Detailed setup, troubleshooting, external-service, and reference material that would violate the grain of the standard files above belongs in `technical/extras/` (see §7), linked from the relevant canonical file.
 
 ---
 
@@ -236,14 +244,78 @@ However, if you think that some of the involved PRs are different or substantial
 
 ---
 
-## 7. Global numbering
+## 7. Supplementary `extras/` trees
+
+**Purpose.** Hold **supplementary** material that does not fit the grain of canonical files in the same top-level folder: long setup walkthroughs, worked examples, operational procedures, third-party service notes, troubleshooting guides, checklists, migrations, and static reference tables. Canonical files remain the **source of truth** for scope, constraints, and pointers to code; `extras/` holds depth readers follow when needed.
+
+**Placement.** Each optional `extras/` folder lives **under** one of the four mandatory top-level folders (`product/`, `technical/`, `future/`, `history/`). Most content belongs under `product/extras/` or `technical/extras/`; `future/extras/` and `history/extras/` are uncommon.
+
+**Naming.** Paths and filenames use **ASCII snake_case**. Every file directly under an `extras/` folder **MUST** start with **exactly one** of these prefixes:
+
+
+| Prefix              | Use                                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| `setup_`            | Install, bootstrap, first-run, local/dev/staging environment                                               |
+| `example_`          | End-to-end worked examples (sample inputs/outputs, illustrative flows)                                     |
+| `procedure_`        | Repeatable operational steps (deploy, rollback, data fix, on-call runbooks)                              |
+| `external_`         | Third-party systems: consoles, vendor APIs, SaaS configuration not owned by this repo                    |
+| `troubleshooting_`  | Symptom → cause → fix; FAQ-style diagnostics                                                             |
+| `reference_`        | Long static material (field lists, error codes, CLI tables) too large for canonical files                |
+| `checklist_`        | Short ordered gates (release, security review, go-live)                                                |
+| `migration_`        | One-time or version-to-version upgrade paths (retire or mark deprecated after cutover)                   |
+| `template_`         | Copy-paste artifacts (config stubs, PR descriptions, request bodies)                                     |
+
+
+After the prefix, use a descriptive slug. Feature-scoped extras **SHOULD** include the feature id in the slug when tied to one feature (e.g. `example_feature_03_bulk_export.md`). Do **not** use numeric feature prefixes as the sole filename (unlike `feature_01_*.md` in the parent folder).
+
+**Relationship to canonical files.**
+
+- Canonical files **own** facts at their usual grain; extras **must not** contradict them.
+- **Every** extra **MUST** be linked from at least one canonical file in the **same** top-level folder (or from a `product/feature_NN_*.md` for product extras). Use relative markdown links (e.g. `[Local setup](extras/setup_local_development.md)`).
+- Canonical files that link to extras **SHOULD** include a **Supplementary material** section listing those links. Do **not** paste the full body of an extra into a canonical file—a short summary plus link is enough.
+- If procedural content would exceed roughly **30 lines** or many command blocks in a canonical file, prefer `extras/` instead of inlining.
+
+**Optional YAML frontmatter** (recommended for feature-scoped or churn-sensitive extras; optional elsewhere):
+
+```yaml
+---
+kind: setup
+related_features: [3]
+related_paths: ["src/deploy/"]
+supersedes: []
+status: current | deprecated
+---
+```
+
+- `kind` mirrors the filename prefix (without trailing underscore).
+- `related_features`: integers only; use `[]` when none.
+- `related_paths`: repo-relative paths; use `[]` when none.
+- `supersedes`: paths to replaced extras, or `[]`.
+- `status`: use `deprecated` when retired; link to the replacement in the body.
+
+For `external_` files, the body **SHOULD** note **owner** (team or role), **last verified** date, and the **vendor documentation URL**.
+
+**Non-markdown assets.** Subfolders under `extras/` (e.g. `extras/assets/`) **MAY** hold scripts, sample JSON, SQL, etc. A markdown extra **MUST** be the entry point that references those assets; do not leave orphan binaries without a linking extra.
+
+**When not to use `extras/`.**
+
+- Facts that belong in standard canonical files at the right grain (`environment_variables.md`, `testing.md`, `feature_NN_*.md`, etc.).
+- UI illustration → `feature_<NN>_screenshots/` plus short prose in the feature file.
+- Planned work → `future/plan_*`, `feedback_*`, or `idea_*` with mandatory frontmatter.
+- Delivered change narrative → new `history/<timestamp>_*.md`, not `extras/` (unless archiving a deprecated `procedure_*` with `status: deprecated`).
+
+**Migrating legacy docs.** When absorbing standalone docs from elsewhere in the repo: merge durable facts into canonical files; **relocate** long procedural, example, or vendor content into the appropriate `*/extras/<prefix><slug>.md`, add links from canonical files, then remove the original loose file. Record `old path → new extras path` in `history/` (see create-docs workflow).
+
+---
+
+## 8. Global numbering
 
 - Feature IDs in filenames: **at least two** zero-padded digits (`feature_01_…`).
 - Any **new** numbered convention introduced later **MUST** document its padding width in an amendment to this updater prompt (or a linked single source of truth).
 
 ---
 
-## 8. When to update what (ongoing diligence)
+## 9. When to update what (ongoing diligence)
 
 **Appropriate grain.** `docs/` describes **durable, reader-relevant facts** at roughly feature, module, and system level; not a running log of every code change. When reconciling PRs or diffs, use judgement: update `product/` and `technical/` only where a reader would be **misled or uninformed** without the change. Internal refactors, test-only edits, dependency bumps, and small fixes that do not alter user-visible behaviour, documented contracts, layout, env vars, or test policy generally **do not** warrant edits outside `history/`. Prefer **surgical** updates there; use `history/` for a concise record that each reviewed PR was covered (see §6.3).
 
@@ -261,11 +333,12 @@ Ask: *Would someone reading only this file, at its usual level of detail, be mis
 | `technical/` | Layout, architecture, env vars, or test strategy change. **Always** refresh `docs_as_of` on `project_layout.md` (since always have to check its content is up to date); refresh stamps on other technical files when their factual claims change. |
 | `future/`    | Items are added, progress, blocked, or superseded—keep frontmatter **and** body aligned.                                                                                                                                                          |
 | `history/`   | After a doc-update pass or meaningful delivered work. Several PRs may be summarised in **one** file (see §6.5). **Always** note PRs that were reviewed even when `product/` / `technical/` / `future/` needed no change; a short "what it was; no other docs updates required" line per PR is enough. |
+| `*/extras/`  | Setup, procedures, examples, integrations with external systems, or troubleshooting steps change. Create or update the relevant prefixed file; ensure canonical files still link to it; mark superseded extras `deprecated` rather than silent deletion when readers may still follow old links. |
 
 
 ---
 
-## 9. PR-close (or documentation PR) checklist
+## 10. PR-close (or documentation PR) checklist
 
 When finishing a change that should leave `docs/` consistent, work through this list. **Skip** items that truly do not apply; if something expected is skipped, **say so** in the new history file body.
 
@@ -276,13 +349,16 @@ When finishing a change that should leave `docs/` consistent, work through this 
 5. `**technical/testing.md**` — If test layout or merge/human-only policy changed: update.
 6. `**product/**` — If behaviour changed: update affected `feature_NN_*.md`, `usage.md` / `integrations.md` if entrypoints or integration facts changed. Update or add screenshots if UI changed.
 7. `**future/**` — If items were implemented, superseded, or blocked: update `status`, dates, and relations; link to the new history file or PR where useful. If the work done fully covers some file here, remove it.
-8. **External docs** — If the repo has documentation files outside `docs/` that cannot be removed (root `README.md`, manifests, etc.), ensure they are consistent with the content just updated in `docs/`.
+8. **`extras/`** (under any top-level folder) — If setup, procedures, examples, external-service notes, or troubleshooting content changed: update affected prefixed files; verify canonical **Supplementary material** links; deprecate superseded extras per §7.
+9. **External docs** — If the repo has documentation files outside `docs/` that cannot be removed (root `README.md`, manifests, etc.), ensure they are consistent with the content just updated in `docs/`.
 
 ---
 
-## 10. Hygiene: what not to do
+## 11. Hygiene: what not to do
 
 - **Human-only** suites in `testing.md` are documented for humans—do not wire them into **default** automated runs in updater workflows without explicit instruction.
 - Avoid **bulk** rewrites of all `feature_*.md` for minor wording-only edits; stay **surgical**.
 - Do **not** **downshift** or **upshift** detail: avoid pasting low-level implementation changes into high-level `product/` or broad `technical/` prose, and avoid bloating specialised technical files with narrative that belongs in `product/`.
 - **Never** replace or delete `history/` entries to hide mistakes—**append** corrections.
+- **Do not** create orphan `extras/` files with no inbound link from a canonical file in the same top-level folder.
+- **Do not** duplicate an extra's full body in a canonical file—link and summarise only.

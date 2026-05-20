@@ -32,7 +32,7 @@ If the prompt mixes several questions, answer **each** explicitly so nothing is 
 
 Following `docs_consumer_prompt.md`:
 
-- **Inventory filenames first.** Under `docs/`, consider every **top-level subfolder that might be relevant** to the question. For each of those folders, **read the filenames** (list the directory or equivalent) so you know **what** documents exist before you open bodies in depth. This is an awareness pass — you are mapping what is there, not yet absorbing every file.
+- **Inventory filenames first.** Under `docs/`, consider every **top-level subfolder that might be relevant** to the question. For each of those folders, **read the filenames** (list the directory or equivalent), including **`extras/`** if present, so you know **what** documents exist before you open bodies in depth. This is an awareness pass — you are mapping what is there, not yet absorbing every file.
 - Start with **`docs/product/`** (overview, features, integrations) for capability and "how it works" questions.
 - Use **`docs/future/`** for roadmap and "is this planned?" questions.
 - Use **`docs/history/`** for "when did this change?" or recent-behaviour questions — it should already summarise the **core** of past work; use **`git`** or **`gh`** only when you need detail not reflected there.

@@ -31,7 +31,7 @@ If the prompt is ambiguous, state your assumptions **once** at the top of `plan.
 
 Before reading large amounts of code, use `docs_consumer_prompt.md` to navigate efficiently:
 
-- **Inventory filenames first.** Under `docs/`, consider every **top-level subfolder that might be relevant** to the request. For each of those folders, **read the filenames** (list the directory or equivalent) so you know **what** documents exist before you open bodies in depth. This is an awareness pass — you are mapping what is there, not yet absorbing every file.
+- **Inventory filenames first.** Under `docs/`, consider every **top-level subfolder that might be relevant** to the request. For each of those folders, **read the filenames** (list the directory or equivalent), including **`extras/`** if present, so you know **what** documents exist before you open bodies in depth. This is an awareness pass — you are mapping what is there, not yet absorbing every file.
 - After that inventory, open and search the content of the files whose names match the request; prefer documentation for **architecture, APIs, configuration, and past changes**. For what shipped and why, rely on **`docs/history/`** first — it should already cover the **core** of past work; use **`git`** or **`gh`** to dig deeper only when something is missing, ambiguous, or you need PR-level detail beyond those summaries (especially when the request touches behaviour that may have changed recently).
 
 ### 3. Deepen with Code Where Needed

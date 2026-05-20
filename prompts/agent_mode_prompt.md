@@ -31,7 +31,7 @@ If critical details are missing, state assumptions at the start of your work or 
 
 Follow `docs_consumer_prompt.md`:
 
-- Inventory relevant `docs/` filenames before deep reads.
+- Inventory relevant `docs/` filenames before deep reads, including any **`extras/`** subfolders under `product/` or `technical/` (setup, procedures, examples per `docs_consumer_prompt.md`).
 - Prefer **`docs/technical/`** for how to implement; use **`docs/product/`** for behaviour intent; use **`docs/history/`** for recent change context.
 - Open code only where docs are insufficient for entry points, types, or test layout.
 

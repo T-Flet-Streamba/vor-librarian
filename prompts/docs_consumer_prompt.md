@@ -17,12 +17,16 @@ You have been given a task in a repository that uses a **standardised documentat
 ```text
 docs/
 ├── product/    # what the project is, usage, integrations, features (user-facing)
+│   └── extras/ # optional — setup, examples, procedures, etc. (see §2.5)
 ├── technical/  # architecture, layout, env vars, tests (implementation-facing)
+│   └── extras/ # optional — see §2.5
 ├── future/     # plans, feedback, ideas (YAML frontmatter on every file)
+│   └── extras/ # optional — rarely used
 └── history/    # dated change summaries with PR and story links
+    └── extras/ # optional — rarely used
 ```
 
-Start many tasks by **listing** one or more of these directories so you know what files exist; **do not** assume every standard filename is present until you see it.
+Start many tasks by **listing** one or more of these directories so you know what files exist; **do not** assume every standard filename is present until you see it. When listing a top-level folder, also list its `extras/` subdirectory if it exists.
 
 ---
 
@@ -73,14 +77,29 @@ The first line of `project_layout.md` (and optionally other technical files) is 
 (date + `T` + time with **hyphens** between hour-minute-second, **no colons**, no timezone, no fractional seconds).
 - Sorting lexically approximates chronological order for the prefix.
 
+### 2.5 `extras/` (under any top-level folder)
+
+Optional supplementary material linked from canonical files in the **same** top-level folder. Canonical files are authoritative; extras add depth (long setup steps, worked examples, vendor docs, runbooks).
+
+**Filenames** under `product/extras/`, `technical/extras/`, etc. begin with **exactly one** of:
+
+`setup_`, `example_`, `procedure_`, `external_`, `troubleshooting_`, `reference_`, `checklist_`, `migration_`, `template_`
+
+Example: `technical/extras/setup_local_development.md`.
+
+**Discovery:** grep by prefix or search for `extras/` in paths. Canonical files often list extras under a **Supplementary material** section. Some extras have optional YAML frontmatter (`kind`, `related_features`, `status`); read frontmatter first when present.
+
+**Interpretation:** prefer canonical `usage.md`, `feature_NN_*.md`, or `environment_variables.md` for facts; open an extra when you need step-by-step or vendor-specific detail.
+
 ---
 
 ## 3. Efficient retrieval workflow
 
 **Default strategy:** **list → grep/narrow → read partial → read full**
 
-1. **List** the subfolders most likely to hold answers (`product/`, `technical/`, `future/`, or `history/`).
+1. **List** the subfolders most likely to hold answers (`product/`, `technical/`, `future/`, or `history/`), including each folder's `extras/` if present.
 2. **Search within `docs/`** using the task's **anchors**, for example:
+  - Setup, runbooks, vendor consoles: grep `extras/` and prefixes such as `setup_`, `procedure_`, `external_`, `troubleshooting_`.
   - Feature mentions: identifiers like `feature_07`, `07`, `feature_7`; general matches of feature names/descriptions; in `future/` frontmatter the field `**related_features`** uses **integers**.
   - Paths or modules from the task: grep repo-relative paths or file names echoed in docs.
   - Symbol names (classes, functions) likely repeated in `project_layout.md` or `architecture*.md`.
@@ -102,7 +121,10 @@ Use the **task shape** to pick **initial** files (still list/grep before reading
 | User-visible behaviour or API                               | Relevant `feature_NN_*.md`, `usage.md`                                             | `architecture*.md`, code under paths mentioned in layout                                           |
 | "Where does X live?" / refactor / concrete planning of work | `technical/project_layout.md`, `architecture*.md`                                   | `feature_`* that document those areas; `environment_variables.md` if config-related; relevant code |
 | Tests / CI / what must pass                                 | `technical/testing.md`                                                              | Merge-critical commands and paths **only**; see §5                                                 |
-| Config / "why does local fail?"                             | `technical/environment_variables.md`, `product/usage.md`                            | `integrations.md`, then code                                                                       |
+| Config / "why does local fail?"                             | `technical/environment_variables.md`, `product/usage.md`                            | `technical/extras/setup_*`, `technical/extras/troubleshooting_*`; `integrations.md`, then code      |
+| Local setup / install / first run                           | `product/usage.md`, `technical/testing.md` (if tests gate setup)                  | `*/extras/setup_*`, `*/extras/example_*`; follow **Supplementary material** links in canonical files |
+| Step-by-step example or operational procedure               | Relevant `feature_NN_*.md`, `usage.md`                                              | `*/extras/example_*`, `*/extras/procedure_*`, `*/extras/checklist_*`                               |
+| Third-party service / vendor console                        | `product/integrations.md`                                                           | `*/extras/external_*`; vendor URLs in extra body                                                   |
 | Planning / backlog / grooming                               | `future/*.md` — filter by frontmatter `status`, `related_features`, grep for themes | Bodies of matching `plan_`*, `feedback_`*, `idea_*`                                                |
 | Past change / release context                               | `history/*` — grep by date range, PR, keyword, or slug                              | PRs and stories linked inside the chosen file(s)                                                   |
 

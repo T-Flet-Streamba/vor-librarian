@@ -33,7 +33,7 @@ Example for **Plan**:
 
 1. Apply the mode-specific instructions from the fetched prompt files.
 2. Use the **current workspace** as the target repository unless the user names another.
-3. Read and use the target repo's `docs/` tree (`product/`, `technical/`, `history/`, `future/`) when it exists.
+3. Read and use the target repo's `docs/` tree (`product/`, `technical/`, `history/`, `future/`, and optional `extras/` under each) when it exists.
 4. Honor the user's concrete request (scope, constraints, output format) on top of the loaded prompts.
 
 ## Plan output (default mode)

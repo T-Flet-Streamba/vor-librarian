@@ -43,7 +43,7 @@ Using `docs_maintainer_prompt.md` as your reference for what each subfolder cove
 ### 4. Draft the Changes
 
 - **Edit existing files** where the change modifies or extends something already documented.
-- **Create new files** only when the change introduces an entirely new topic not covered by any existing document.
+- **Create new files** only when the change introduces an entirely new topic not covered by any existing document. Long setup, procedure, example, or vendor-specific content belongs in `*/extras/` with the appropriate prefix (see the **Supplementary `extras/` trees** section in `docs_maintainer_prompt.md`), linked from canonical files—not inlined into `usage.md` or `architecture.md` when that would violate their usual grain.
 - **Remove or archive content** that the change has made obsolete.
 - Reference the specific PR or commit that prompted the update in changelog entries.
 

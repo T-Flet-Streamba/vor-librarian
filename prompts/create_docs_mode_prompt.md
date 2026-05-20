@@ -33,7 +33,11 @@ Process the codebase **one module/package/logical unit at a time**. For each uni
 
 1. Read its code, tests, and local configuration.
 2. Write documentation into the appropriate `docs/` files immediately — do not defer writing until you have read everything. Create and populate files as you go, accumulating content with each unit you process.
-3. If the unit contains non-structural documentation files (e.g. design notes, wiki-style markdown, architecture descriptions — anything that is not required by the project's tooling such as READMEs, manifests, or licence files), absorb their content into the appropriate `docs/` files and **delete the originals**. The new `docs/` folder should be the single source of truth; stale standalone documents must not survive alongside it.
+3. If the unit contains non-structural documentation files (e.g. design notes, wiki-style markdown, architecture descriptions — anything that is not required by the project's tooling such as READMEs, manifests, or licence files), consolidate them into `docs/` per the **Supplementary `extras/` trees** section in `docs_maintainer_prompt.md`:
+   - **Durable facts** at the right grain → merge into the appropriate canonical files (`overview.md`, `feature_NN_*.md`, `architecture.md`, etc.).
+   - **Long procedural, example, vendor, or reference material** → relocate into the appropriate `*/extras/<prefix><slug>.md` (e.g. `setup_`, `example_`, `external_`), add a short summary and link from the canonical file (**Supplementary material** section), then **delete the original** loose file.
+   - **Tooling-required docs** outside `docs/` (root README, manifests) → keep; align with `docs/` per the maintainer prompt; do not delete.
+   The new `docs/` folder is the single source of truth; stale standalone narrative docs must not survive alongside it.
 4. Insert `<<USER INPUT REQUIRED: …>>` placeholders wherever you encounter gaps (see §4 below).
 5. Move on to the next unit.
 
@@ -82,7 +86,8 @@ After you have worked through every unit in the repository, do a full review of 
 - **Fill structural gaps** — check that every subfolder defined by `docs_maintainer_prompt.md` has appropriate coverage. If a subfolder is empty or thin, determine whether that is justified or whether you missed something.
 - **Improve coherence** — ensure the documentation reads as a unified body of work, not a collection of per-module notes. Adjust language, ordering, and cross-references.
 - **Verify placeholders** — confirm that every `<<USER INPUT REQUIRED: …>>` tag is still relevant and clearly worded after the full context is available.
-- **Add a history entry** — write a simple entry in `history/` recording that documentation was created for this repository. Keep it brief — just the fact that it happened, not a summary of what was produced or what gaps remain. If any pre-existing documentation files were absorbed and removed during the process, list them here so there is a clear record of what was consolidated.
+- **Add a history entry** — write a simple entry in `history/` recording that documentation was created for this repository. Keep it brief — just the fact that it happened, not a summary of what was produced or what gaps remain. If any pre-existing documentation files were absorbed and removed during the process, list them here with mappings (`old path → new docs/ path`, including `*/extras/` relocations) so there is a clear record of what was consolidated.
+- **Verify `extras/`** — every file under any `extras/` folder is linked from at least one canonical file in the same top-level folder; no orphan extras.
 
 ### 6. Writing Guidelines
 
@@ -96,7 +101,7 @@ After you have worked through every unit in the repository, do a full review of 
 - Create a PR against the project repo containing the full `docs/` folder.
 - The PR title should clearly indicate this is an initial documentation creation (e.g. "Create docs/ baseline for ").
 - The PR description should summarise:
-  - Which subfolders were populated and with how many files.
+  - Which subfolders were populated and with how many files (including any `extras/` trees and prefix breakdown if non-trivial).
   - How many `<<USER INPUT REQUIRED: …>>` placeholders were inserted.
   - Any areas of the codebase that were particularly unclear or under-documented.
 - If wiki-level pages are warranted, create a separate PR against the wiki repo.
