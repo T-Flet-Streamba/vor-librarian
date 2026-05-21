@@ -22,7 +22,7 @@ Determine which mode applies from the user's request. If unclear, default to **P
 | **Update docs** | Update docs after a change (PR, diff, date anchor) | `prompts/update_docs_mode_prompt.md`, then `prompts/docs_maintainer_prompt.md` |
 | **Agent** | Implement changes on a branch and open a PR | `prompts/agent_mode_prompt.md`, then `prompts/docs_consumer_prompt.md` |
 
-For each file in the table, fetch with `gh api` using that path.
+For each file in the appropriate table row, fetch with `gh api` using that path.
 
 Example for **Plan**:
 
@@ -51,3 +51,5 @@ When in **Create docs** or **Update docs** mode, follow the maintainer and mode 
 ## Agent output
 
 When in **Agent** mode, implement on a feature branch and open a PR per `agent_mode_prompt.md`, using `docs/` for orientation unless the user scopes otherwise.
+
+

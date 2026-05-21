@@ -17,6 +17,17 @@ You are responsible for **creating, editing, and organising** the repository tre
 
 **Naming.** Paths and filenames under `docs/` use **ASCII snake_case**. No spaces in filenames.
 
+**Combined documentation sites.** Some deployments assemble many repositories’ `docs/` trees into one unified MkDocs site. This prompt is about how to handle an individual repo's `docs/`, but linking rules (§1.1) and optional **`docs/.vor-docs.yaml`** (§11) keep pages working in that context without referring to other repositories.
+
+### 1.1 Linking inside `docs/`
+
+- **Within `docs/`:** use **relative** markdown links only (e.g. `[Architecture](../technical/architecture.md)`, `[Setup](extras/setup_local_development.md)`).
+- **Do not** use GitHub `blob/` or `tree/` URLs anywhere under `docs/`.
+- **Do not** use absolute site URLs or path prefixes meant for a multi-repo documentation viewer (e.g. leading-slash paths outside this repo’s `docs/` tree).
+- **Cross-repository references** from inside `docs/` are **discouraged**; if unavoidable, use plain path citations or wording the active **mode prompt** allows—do not assume another repo is present in the workspace.
+- **Do not** add `mkdocs.yml` (or equivalent site config) at the repo root or under `docs/` expecting it to drive an organisation-wide site.
+- **External links** (vendor docs, third-party APIs) in `extras/` or canonical files are fine when they intentionally leave this documentation tree.
+
 ---
 
 ## 2. Mandatory root layout
@@ -351,10 +362,31 @@ When finishing a change that should leave `docs/` consistent, work through this 
 7. `**future/**` — If items were implemented, superseded, or blocked: update `status`, dates, and relations; link to the new history file or PR where useful. If the work done fully covers some file here, remove it.
 8. **`extras/`** (under any top-level folder) — If setup, procedures, examples, external-service notes, or troubleshooting content changed: update affected prefixed files; verify canonical **Supplementary material** links; deprecate superseded extras per §7.
 9. **External docs** — If the repo has documentation files outside `docs/` that cannot be removed (root `README.md`, manifests, etc.), ensure they are consistent with the content just updated in `docs/`.
+10. **Linking** — No new `blob/` URLs; relative links between `docs/` files remain valid. Update **`docs/.vor-docs.yaml`** only if nav labels or excludes should change (§11).
 
 ---
 
-## 11. Hygiene: what not to do
+## 11. Optional `docs/.vor-docs.yaml`
+
+This repository **MAY** include **`docs/.vor-docs.yaml`** with optional navigation hints for deployments that build a combined documentation site. It is **not** site generator config and does **not** replace the layout rules in this document.
+
+**Valid fields:**
+
+| Field | Purpose |
+| ----- | ------- |
+| `nav_title` | Short label for this repo’s section in a combined site sidebar |
+| `exclude` | Optional globs **relative to `docs/`** to omit paths from the sidebar (rare; pages may still be built for search) |
+| `nav_order` | Optional list of paths relative to `docs/` to order top-level nav entries |
+
+Normative field definitions and examples live in the **vor-librarian** repository at `skill/schemas/vor-docs.schema.yaml`, `skill/schemas/vor-docs.project.example.yaml` (fetch with the same mechanism as prompts when you need the full schema).
+
+**Defaults when absent:** navigation includes **the entire `docs/` tree**—all four top-level folders and every `extras/` subdirectory. Combined sites use **collapsed nested sections** by default so the sidebar stays scannable without hiding pages. **Do not** add `exclude` merely to tuck away `history/`, `future/`, or `extras/`; leave them in the nav.
+
+**Hygiene:** Do not put branch names, repository lists, or integration metadata in `.vor-docs.yaml`.
+
+---
+
+## 12. Hygiene: what not to do
 
 - **Human-only** suites in `testing.md` are documented for humans—do not wire them into **default** automated runs in updater workflows without explicit instruction.
 - Avoid **bulk** rewrites of all `feature_*.md` for minor wording-only edits; stay **surgical**.
@@ -362,3 +394,4 @@ When finishing a change that should leave `docs/` consistent, work through this 
 - **Never** replace or delete `history/` entries to hide mistakes—**append** corrections.
 - **Do not** create orphan `extras/` files with no inbound link from a canonical file in the same top-level folder.
 - **Do not** duplicate an extra's full body in a canonical file—link and summarise only.
+- **Do not** add GitHub `blob/` links or standalone site config (`mkdocs.yml`, etc.) under `docs/` for an organisation-wide viewer.

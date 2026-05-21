@@ -1,0 +1,12 @@
+# Example: copy to docs/.vor-docs.yaml in a project repository (optional)
+# Default: no file needed — full docs/ tree appears in combined-site nav
+# (nested sections collapsed by default; extras/ included).
+
+nav_title: "Payment API"
+
+# exclude: []   # rarely needed — do not use to hide history/, future/, or extras/
+
+# nav_order:   # optional — only when auto-walk order is wrong
+#   - product/overview.md
+#   - product/usage.md
+#   - technical/architecture.md

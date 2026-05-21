@@ -186,6 +186,7 @@ Example:
 prompts/              # Canonical prompt files (single source of truth)
 skill/local/          # SKILL.md installed to users' machines (local skill)
 skill/remote/         # entrypoint.md — fetched on every skill use
+skill/worker/         # entrypoint.md — used by librarian-worker containers (local prompts)
 scripts/              # install.ps1, install.sh (remote one-liner entrypoints)
 container/            # Future containerized runtime
 ```

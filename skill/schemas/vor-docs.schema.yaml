@@ -1,0 +1,53 @@
+# Schema for .vor-docs.yaml fragments (YAML)
+#
+# Used by:
+#   - <project-repo>/docs/.vor-docs.yaml
+#   - Organisation wiki repo root .vor-docs.yaml (optional)
+#
+# Consumed by the organisation docs assembler (see DO NOT COMMIT/concrete_architecture_plan.md §4.2).
+# This file is normative documentation for authors and validators—not MkDocs site config.
+#
+# Shipped in vor-librarian at skill/schemas/ for skill and container consumers.
+
+schema_version: 1
+
+description: >
+  Optional hints merged into generated navigation for one repo's docs tree
+  or for organisation wiki portfolio content. Branch names and integration
+  metadata do not belong in this file.
+
+fields:
+  nav_title:
+    type: string
+    required: false
+    description: >
+      Short sidebar label for this repository's section in a combined documentation site.
+      When omitted, the assembler uses a derived title (e.g. repo name).
+
+  exclude:
+    type: list
+    required: false
+    item_type: string
+    description: >
+      Optional glob patterns relative to the content root being assembled.
+      For project repos, patterns are relative to docs/. For the organisation
+      wiki, patterns are relative to that repo root. Use only for exceptional
+      omissions (not for history/, future/, or extras/ by default). Excluded
+      paths are omitted from the sidebar; markdown may still be built for search.
+      Default assembler policy includes the full tree; nested nav sections are
+      collapsed by default in the site theme.
+
+  nav_order:
+    type: list
+    required: false
+    item_type: string
+    description: >
+      Explicit ordering of nav entries, each path relative to the same root as
+      exclude. Listed files or directories appear first in this order; any
+      unlisted discoverable pages follow in default walk order. Use sparingly—
+      prefer auto-nav when the tree is already clear.
+
+rules:
+  - Do not put branch names, repo_slug lists, or integration registry data here.
+  - Do not embed MkDocs theme, plugins, or site_url here.
+  - File must be valid YAML; unknown top-level keys should be rejected by validators.

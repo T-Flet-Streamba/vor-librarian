@@ -1,0 +1,6 @@
+# Example: copy to .vor-docs.yaml at the organisation wiki repository root (optional)
+# Default: no file needed — full wiki tree in nav (nested sections collapsed).
+
+nav_title: "VOR portfolio"
+
+# exclude: []   # rarely needed — omit only non-reader paths if you must

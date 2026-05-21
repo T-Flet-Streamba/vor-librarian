@@ -42,3 +42,5 @@ Replace `{repo}` and `{ref}` with the resolved values. Run via the shell tool; r
 ## Fetch failures
 
 If `gh` is missing, returns 404, auth errors, or network failure, stop. Report the repo, ref, and path. Suggest `gh auth login` and checking `repo` / `ref` in `vor-librarian.json`.
+
+
